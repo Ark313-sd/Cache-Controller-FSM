@@ -5,7 +5,7 @@
 
 
 
-class CacheFrame;
+class Cache;
 
 class CacheLine
 {
@@ -16,19 +16,26 @@ class CacheLine
     std::vector<std::string> data;
     int getMetadataSize() const;
     void setDirty();
-    int getTagSize() const;
     int getSize() const;
     
     void setNWords();
-    CacheFrame *ptr_frame;
+    Cache *ptr_frame;
     void setWidth();
-
-    friend class CacheFrame;
+    
+    friend class Cache;
 public:
-    CacheLine(CacheFrame* ptr_frame);
+    void invalidate();
+    CacheLine(Cache* ptr_frame=NULL);
+    // CacheLine(const CacheLine& line);
     void setMetadata(std::string tag, bool valid=true, bool dirty=false);
     void insertData(std::vector<std::string> data);
+    int getTagSize() const;
+    int isDirty() const;
+    int isValid() const;
+    std::string getTag() const;
     std::string getLine() const;
-    void invalidate();
+
+
+    std::string& operator [] (int idx);
 
 };

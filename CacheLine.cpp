@@ -9,7 +9,7 @@ void CacheLine::setMetadata(std::string tag, bool valid, bool dirty)
     this->valid = valid;
     this->dirty = dirty;
 }
-CacheLine::CacheLine(CacheFrame* ptr_frame) 
+CacheLine::CacheLine(Cache* ptr_frame) 
     : tag(""), valid(false), dirty(false), ptr_frame(ptr_frame)
 {
     setNWords();
@@ -26,6 +26,13 @@ void CacheLine::setDirty()
 {
     this->dirty = true;
 }
+
+string& CacheLine::operator [] (int idx)
+{
+    return data[idx];
+}
+
+
 
 
 
@@ -71,6 +78,15 @@ string CacheLine::getLine() const
     return ss.str();
 }
 
+int CacheLine::isDirty() const
+{
+    return dirty;
+}
+int CacheLine::isValid() const
+{
+    return valid;
+}
+
 int CacheLine::getMetadataSize() const
 {
     // cout << "metadata size: " << getTagSize() + 4 << endl;
@@ -81,6 +97,10 @@ int CacheLine::getSize() const
 {
     // cout << "size: " << getMetadataSize() +  3 + 32 << endl;
     return getMetadataSize() +  3 + 32;
+}
+std::string CacheLine::getTag() const
+{
+    return tag;
 }
 
 

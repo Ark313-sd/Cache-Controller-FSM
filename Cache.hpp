@@ -3,26 +3,28 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include "config.hpp"
 #include "CacheLine.hpp"
 
-const int ADDRESS_SIZE = 16;
 
-class CacheFrame
+
+class Cache
 {
     // cache info
     const int nLines;
     const int nWords;
     
-    
     std::string constructLine(int length, const std::string& fillChar) const;
+    friend class Controller;
     
-    public:
-    CacheFrame(int linePower=4, int wordPower=2);
-    void printFrame() const;
+public:
+    Cache(int linePower=4, int wordPower=2);
+    std::vector<CacheLine*> line;
+    void printCache() const;
     int getNWords() const;
     int getNLines() const;
     
-    std::vector<CacheLine*> line;
+    CacheLine* operator [] (int idx) const;
 
     // box info
     int width;

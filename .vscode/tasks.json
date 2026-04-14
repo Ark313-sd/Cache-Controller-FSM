@@ -9,7 +9,10 @@
                 "-g",
                 "main.cpp",
                 "CacheLine.cpp",
-                "CacheFrame.cpp",
+                "Cache.cpp",
+                "config.cpp",
+                "Controller.cpp",
+                "Instruction.cpp",
                 "-o",
                 "${fileDirname}/main"
             ],
