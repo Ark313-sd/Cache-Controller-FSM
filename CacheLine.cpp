@@ -31,6 +31,10 @@ string& CacheLine::operator [] (int idx)
 {
     return data[idx];
 }
+std::string CacheLine::getWord(int wordIdx) const
+{
+    return data[wordIdx];
+}
 
 
 

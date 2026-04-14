@@ -32,6 +32,7 @@ public:
     int getTagSize() const;
     int isDirty() const;
     int isValid() const;
+    std::string getWord(int wordIdx) const;
     std::string getTag() const;
     std::string getLine() const;
 

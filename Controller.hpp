@@ -18,11 +18,14 @@ class Controller
     std::string getTag(const std::string& addr) const;
     bool hit(const std::string& addr) const;
     int getBlockIdx(const std::string& addr) const;
+    int getByteOffset(const std::string& addr) const;
+    int getWordOffset(const std::string& bits) const;
+    int getDataFromCacheByAddr(Instruction::instructionType iType, const std::string& addr) const;
     
 public:
-    Controller();
+    Controller(Cache* cache);
     void operate();
-    void exeInstruction(Instruction i);
+    long long int exeInstruction(Instruction i);
     void addInstruction(Instruction i);
 };
 unsigned int binToInt(const std::string& bits);

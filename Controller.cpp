@@ -7,14 +7,15 @@
 #include <iostream>
 #include <queue>
 #include <stdexcept>
+#include <cmath>
 using namespace std;
 
 
 
 
-Controller::Controller() : state(idle)
+Controller::Controller(Cache* cache) : state(idle)
 {
-    cache = new Cache;
+    this->cache = cache;
     cout << "Tag Size:" << cache->line[0]->getTagSize() << endl;
 }
 void Controller::operate()
@@ -25,7 +26,8 @@ void Controller::operate()
         {
             Instruction i = pendingInstructions.front();
             pendingInstructions.pop();
-            exeInstruction(i);
+            long long int res = exeInstruction(i);
+            cout << "res: " << res << endl;
         }
     
     }
@@ -82,12 +84,57 @@ bool Controller::hit(const std::string& addr) const
 
     return addr_tag == cache_tag;
 }
-void Controller::exeInstruction(Instruction ins)
+int Controller::getDataFromCacheByAddr(Instruction::instructionType iType, const string& addr) const
+{
+    int x = -1;
+    switch(iType)
+    {
+        case Instruction::addWord:
+        {
+            int idx = getBlockIdx(addr);
+            int wordIdx = getWordOffset(addr);
+            string x_bin = cache->line[idx]->getWord(wordIdx);
+            x = binToInt(x_bin);
+            cout << "x_bin: " << x_bin << " x: " << x << endl;
+            break;
+        }
+        case Instruction::addByte:
+        {
+            int idx = getBlockIdx(addr);
+            int wordIdx = getWordOffset(addr);
+            int byteOffset = getByteOffset(addr);
+            string word = cache->line[idx]->getWord(wordIdx);
+            string x_bin = word.substr(8 * byteOffset, 8);
+            x = binToInt(x_bin);
+            cout << "x_bin: " << x_bin << " x: " << x << endl;
+            break;
+        }
+        case Instruction::subWord:
+        {
+            int idx = getBlockIdx(addr);
+            int wordIdx = getWordOffset(addr);
+            x = binToInt(cache->line[idx]->getWord(wordIdx));
+            break;
+        }
+        case Instruction::subByte:
+        {
+            int idx = getBlockIdx(addr);
+            int wordIdx = getWordOffset(addr);
+            int byteOffset = getByteOffset(addr);
+            string word = cache->line[idx]->getWord(wordIdx);
+            x = binToInt(word.substr(8 * byteOffset, 8));
+            break;
+        }
+        default : cout << "Unknown type\n";
+    }
+    return x;
+}
+long long int Controller::exeInstruction(Instruction ins)
 {
     cout << "X addr: " << ins.x_addr << endl;
     cout << "Y addr: " << ins.y_addr << endl;
 
-    int x;
+
     if(!hit(ins.x_addr))
     {
         cout << "cache miss tryna fetch X\n";
@@ -96,9 +143,11 @@ void Controller::exeInstruction(Instruction ins)
     }
     else
     {
-        cout << "cache hit on X";
+        cout << "cache hit on X\n";
     }
-    int y;
+
+    int x = getDataFromCacheByAddr(ins.iType, ins.x_addr);
+
     if(!hit(ins.y_addr))
     {
         cout << "cache miss tryna fetch Y\n";
@@ -109,21 +158,33 @@ void Controller::exeInstruction(Instruction ins)
     {
         cout << "cache hit on Y\n";
     }
+
+    int y = getDataFromCacheByAddr(ins.iType, ins.y_addr);
+
     cache->printCache();
 
     
-    
     switch(ins.iType)
     {
-        case add:
+        case Instruction::addWord:
         {
-            break;
+            return x + y;
         }
-        case sub:
+        case Instruction::addByte:
         {
-            break;
+            return x + y;
         }
+        case Instruction::subWord:
+        {
+            return x - y;
+        }
+        case Instruction::subByte:
+        {
+            return x - y;
+        }
+        default : cout << "unknown instruction type\n";
     }
+    return 0;
 }
 bool Controller::fetchBlock(const std::string addr)
 {
@@ -170,7 +231,18 @@ bool Controller::fetchBlock(const std::string addr)
         return false;
     }
 }
-
+int Controller::getByteOffset(const std::string& addr) const
+{
+    int m = log2(cache->nWords);
+    string bo = addr.substr(ADDRESS_SIZE - 2, 2);
+    return binToInt(bo);
+}
+int Controller::getWordOffset(const std::string& addr) const
+{
+    int m = log2(cache->nWords);
+    string wo = addr.substr(ADDRESS_SIZE - 2 - m, m);
+    return binToInt(wo);
+}
 void Controller::addInstruction(Instruction i)
 {
     pendingInstructions.push(i);

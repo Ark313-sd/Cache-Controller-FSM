@@ -1,4 +1,6 @@
 -o
+*.o
+*.out
 TextBox.cpp
 TextBox.hpp
 ram.txt

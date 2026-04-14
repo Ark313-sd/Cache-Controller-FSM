@@ -14,14 +14,15 @@ int main()
     // createRAM();
 
 
-    // Cache cf(3, 2);
     // cf.line[0]->setMetadata("00000000", true, false);
     // vector<string> data = {"10110011100011110000111100110011", "0000", "1111", "1010"};
     // cf.line[0]->insertData(data);
     // cf.printCache();
-
-    Controller c;
-    c.addInstruction(Instruction(add, "0", "10000"));
+    
+    Cache* cache = new Cache(3, 2);
+    Controller c(cache);
+    c.addInstruction(Instruction(Instruction::addWord, "0", "10000"));
+    c.addInstruction(Instruction(Instruction::addByte, "1", "10101"));
     c.operate();
 
 
