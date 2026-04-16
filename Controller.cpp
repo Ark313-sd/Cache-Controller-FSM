@@ -25,12 +25,12 @@ void Controller::operate()
     {
         if(state == idle)
         {
+            cout << "\nState: IDLE\n";
             Instruction i = pendingInstructions.front();
             pendingInstructions.pop();
             long long int res = exeInstruction(i);
-            cout << "res: " << res << endl;
+            cout << "Result: " << res << endl;
         }
-    
     }
 }
 unsigned int binToInt(const std::string& bits)
