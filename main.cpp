@@ -1,3 +1,8 @@
+#include "Cache.hpp"
+#include "Controller.hpp"
+#include "Instruction.hpp"
+#include "config.hpp"
+
 int main()
 {
     createRAM();   // for now, keep it enabled while testing
