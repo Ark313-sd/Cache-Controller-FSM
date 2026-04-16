@@ -15,14 +15,13 @@ class Controller
     State state; 
     std::queue<Instruction> pendingInstructions;
     bool fetchBlock(const std::string addr);
-std::string getTag(const std::string& addr) const;
-bool hit(const std::string& addr) const;
-int getBlockIdx(const std::string& addr) const;
-int getByteOffset(const std::string& addr) const;
-int getWordOffset(const std::string& bits) const;
-int getDataFromCacheByAddr(Instruction::instructionType iType, const std::string& addr) const;
-bool writeBackLine(int lineIdx);
-bool handleMiss(const std::string& addr);
+    std::string getTag(const std::string& addr) const;
+    bool hit(const std::string& addr) const;
+    int getBlockIdx(const std::string& addr) const;
+    int getByteOffset(const std::string& addr) const;
+    int getWordOffset(const std::string& bits) const;
+    int getDataFromCacheByAddr(Instruction::instructionType iType, const std::string& addr) const;
+    bool writeBackLine(int lineIdx);
 
 public:
     Controller(Cache* cache);
