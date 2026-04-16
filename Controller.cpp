@@ -455,3 +455,26 @@ int Controller::evictCache()
     cout << "evictCache: done — " << writtenBack << " line(s) written back\n";
     return writtenBack;
 }
+
+
+bool Controller::handleMiss(const std::string& addr)
+{
+    int idx = getBlockIdx(addr);
+    CacheLine* line = (*cache)[idx];
+
+    cout << "State: COMPARE_TAG -> MISS at line " << idx << endl;
+
+    // If the line currently holds valid dirty data, write it back first
+    if (line->isValid() && line->isDirty())
+    {
+        cout << "State: WRITE_BACK for line " << idx << endl;
+        if (!writeBackLine(idx))
+        {
+            cout << "Write-back failed.\n";
+            return false;
+        }
+    }
+
+    cout << "State: ALLOCATE for address " << addr << endl;
+    return fetchBlock(addr);
+}
